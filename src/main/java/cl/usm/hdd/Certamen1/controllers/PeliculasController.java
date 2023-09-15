@@ -15,7 +15,7 @@ public class PeliculasController {
     private PeliculasService peliculasService;
     private boolean validLimit(String tipoLimite){
         String [] limites = {"Menor_edad","Adolescentes","Mayor"};
-        return Stream.of(limites).anyMatch(l->l.equalsIgnoreCase(tipoLimite));
+        return Stream.of(limites).anyMatch(l->l.equals(tipoLimite));
     }
 
     @PostMapping("/crearPelicula")
@@ -38,6 +38,9 @@ public class PeliculasController {
 
     @GetMapping("/peliculas/{tipo}")
     public ResponseEntity<List<Pelicula>> filtrar(@PathVariable String tipo){
+        if (!validLimit(tipo)){
+            ResponseEntity.badRequest().build();
+        }
         try{
             return ResponseEntity.ok(this.peliculasService.filtrar(tipo));
         }catch (Exception ex){
